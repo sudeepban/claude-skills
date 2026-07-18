@@ -1,6 +1,6 @@
 ---
 name: meal-planner
-description: Plans the week's dinners (home-cooked, takeout/delivery, or dinner out) by reading the family Google Calendar for existing "MEAL: <description>" events and evening availability. Make sure to use this whenever the user asks to plan dinners, plan meals, figure out the week's food, fill in the meal calendar, or mentions "meal planning," "what's for dinner this week," or a specific mix of home-cooked vs. eating-out nights. Balances home-cooked meal complexity and takeout vs. dinner-out based on how busy the week looks, and proposes a plan for review rather than writing to the calendar directly.
+description: Plans the week's dinners (home-cooked, takeout/delivery, or dinner out) by reading the family Google Calendar for existing MEAL-tagged events and evening availability. Make sure to use this whenever the user asks to plan dinners, plan meals, figure out the week's food, fill in the meal calendar, or mentions "meal planning," "what's for dinner this week," or a specific mix of home-cooked vs. eating-out nights. Balances home-cooked meal complexity and takeout vs. dinner-out based on how busy the week looks, and proposes a plan for review rather than writing to the calendar directly.
 ---
 
 # Meal Planner
