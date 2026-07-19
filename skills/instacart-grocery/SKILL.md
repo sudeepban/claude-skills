@@ -24,10 +24,11 @@ Call the `cart` tool with `retailer_name` set to the retailer from Step 1. If a 
 The staples list lives in [references/staples.md](references/staples.md) and is maintained by the user — read it fresh each time rather than assuming it hasn't changed since last use.
 
 1. **Core tier** — items ordered constantly regardless of which store is active. Add these automatically via `quick_add_search_queries`, no confirmation needed. A couple of core items rotate brand/variety order to order (e.g. cereal) rather than repeating one fixed SKU — for those, ask a quick one-line "which one this week?" using the options listed in staples.md instead of guessing, then add the chosen one.
-2. **Retailer-specific tier** — staples for whichever retailer is active this order (DeCicco's boutique brands, or Stop & Shop's mainstream equivalents). Add these automatically too, using the list for the retailer selected in Step 1.
-3. **Seasonal/occasional tier** — items bought periodically, not every time (e.g. winter ice-melter, taco-night kits, craft beer, a specific protein). Read these out as a short list and ask which, if any, to include this order — don't add without confirmation.
+2. **Regular-but-infrequent tier** — items that are clearly habits, not one-offs, but don't appear in every order and aren't tied to a specific store. These apply regardless of which house is active. Read them out as a quick checklist ("want any of the usual extras — Beecher's, Frank Zurro's bread, ...?") and add only what the user confirms — don't add the whole tier by default.
+3. **Retailer-specific tier** — items tied to what a specific store actually carries (private-label products, or a genuine brand swap like Nature's Promise vs. Cento beans), not just items that happen to be infrequent. Add these automatically for whichever retailer is active this order.
+4. **Seasonal/occasional tier** — items bought periodically based on time of year or occasion, not tied to either store (e.g. winter ice-melter, taco-night kits, craft beer, a specific protein). Read these out as a short list and ask which, if any, to include this order — don't add without confirmation.
 
-The Stop & Shop side of the list is based on a much smaller order history sample than DeCicco & Sons — treat it as provisional and expect it to firm up as more beach-season orders happen.
+The Stop & Shop side of the retailer-specific list is based on a much smaller order history sample than DeCicco & Sons — treat it as provisional and expect it to firm up as more beach-season orders happen. Most of the regular-but-infrequent tier is presumed to apply at Stop & Shop too, even where the small sample hasn't confirmed it yet directly.
 
 ## Step 4: Ask what's different this week
 
