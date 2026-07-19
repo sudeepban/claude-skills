@@ -21,9 +21,14 @@ Call the `cart` tool with `retailer_name` set accordingly. If a different retail
 
 ## Step 2: Parse the pasted list
 
-Lists are often copied straight from the Alexa app, which exports in a two-line-per-item block: the item name (once plain, once quoted), followed by a metadata line like `Idea	1	0` (entry type, quantity, checked-off flag). Extract just the item names. **Ignore quantity entirely** — the user adjusts quantities in the cart afterward, so every item goes in as a simple add regardless of what the metadata line shows.
+Lists are usually copied straight from the Alexa app, and **the export format is not stable** — Alexa/the app changes how it renders a copy-paste from one time to the next. Don't assume a single fixed template; instead recognize the pattern generically each time:
 
-If the list arrives in some other format (plain lines, freeform text), parse it the same way: one grocery item per entry, ignoring any quantity mentioned.
+- The item name is the actual grocery item text (e.g. "flour tortillas," "bacon," "Deep cereal").
+- Everything else is noise to discard: quantity/checked-off flags (e.g. a line like `Idea	1	0`), who-added-it and when (e.g. "Samantha Added 24 days ago," or just "Added 25 days ago" with no name), and UI action labels ("Show search result," "Edit," "Delete"). None of this affects what gets added.
+- **Ignore quantity entirely**, however it's represented — the user adjusts quantities in the cart afterward, so every item goes in as a simple add.
+- Attribution (who added an item) is usually irrelevant, but keep it in view for Step 3 — occasionally an item's text only makes sense in light of who added it (see below).
+
+If the list arrives in some other format entirely (plain lines, freeform text, a screenshot), apply the same principle: pull out the real item names and drop everything that's just metadata.
 
 ## Step 3: Match each item against the product guide
 
@@ -32,7 +37,8 @@ The guide lives in [references/staples.md](references/staples.md) — read it fr
 1. Look for a match — exact or close (shorthand, plural/singular, common nickname) — against a guide entry. Use the guide's specific product name as the search query when found.
 2. Respect retailer scope: skip a DeCicco-only entry (e.g. the bakery bread) if Stop & Shop is active, and use the retailer-appropriate variant where the guide lists one per store (e.g. black bean brand).
 3. If a term is genuinely ambiguous between two guide entries (e.g. plain "mac and cheese" could mean Stouffer's or Beecher's), ask which one rather than guessing.
-4. If there's no guide match at all, use the user's own wording as the search query directly — don't invent a brand.
+4. **If the item text isn't actually a product description** — it names a family member (e.g. "Deep cereal" means a cereal for Deep, not a product called that), or describes an occasion/use rather than a thing to buy (e.g. "bread for grilled cheese" — possibly a different bread than the guide's usual bakery loaf) — don't search it literally. Ask the user what specific product is meant.
+5. If there's no guide match and the text is a plain product description, use the user's own wording as the search query directly — don't invent a brand.
 
 ## Step 4: Add everything to the cart
 
