@@ -84,8 +84,10 @@ For each of the nights chosen in Step 4, pick a category consistent with Step 2'
 
 Vary choices across the week rather than repeating the same dish or restaurant twice even if it's not in the recent-history window.
 
+Pick a food/cuisine/restaurant-flavored emoji for each meal on the spot — there's no fixed mapping to look up. Mix it up: the obvious, recognizable pick is often the right call (🍔 for burgers, 🍕 for pizza, a national flag like 🇮🇹 for an Italian spot), but don't feel locked into it every time — an occasional more playful or unexpected choice (🐟 or 🥢 for a sushi night, say) is welcome too. Just keep whatever you pick clearly connected to the actual dish or place.
+
 ## Step 6: Present the plan for review
 
-Show a day-by-day table for the chosen nights only: day, category, specific meal (or "already planned: <description>" for existing events), and a one-line note on why that category was chosen (dinner-window conflict, kids' activity, Deep In Office, busier/lighter day, etc). List the nights left unplanned separately and briefly summarize the week's overall busyness call from Step 3.
+Show a day-by-day table for the chosen nights only: day, category, specific meal with its emoji (or "already planned: <description>" for existing events), and a one-line note on why that category was chosen (dinner-window conflict, kids' activity, Deep In Office, busier/lighter day, etc). List the nights left unplanned separately and briefly summarize the week's overall busyness call from Step 3.
 
-**Do not create, edit, or delete any calendar events at this step.** Ask the user if the plan looks right, and only create `Meal: <description>` events (title case, matching the existing calendar convention) for the nights they approve, using their explicit go-ahead for each change (or a clear "yes, add all of these" for the whole batch).
+**Do not create, edit, or delete any calendar events at this step.** Ask the user if the plan looks right, and only create `Meal: <emoji> <description>` events (title case, matching the existing calendar convention, emoji right after the `Meal:` prefix) for the nights they approve, using their explicit go-ahead for each change (or a clear "yes, add all of these" for the whole batch). Skip the emoji only if nothing reasonable fits.
