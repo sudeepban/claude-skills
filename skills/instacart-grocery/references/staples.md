@@ -30,7 +30,8 @@ Built from an analysis of 23 past Instacart "family order" receipts (Dec 2025–
 | Stouffer's Mac & Cheese (single-serve) | | 9/21 DeCicco, usually 2 per order. If the list just says "mac and cheese," ask whether Stouffer's (quick, freezer) or Beecher's (below) is meant |
 | Beecher's Mac & Cheese | | 5/21 DeCicco. See note above — ask if "mac and cheese" is ambiguous |
 | Beecher's Cheese Sticks | cheese sticks | 5/21 DeCicco |
-| Boar's Head Yellow American Cheese (deli-sliced) | american cheese, sliced cheese | 6/21 DeCicco, 1/2 S&S |
+| Boar's Head Yellow American Cheese (deli-sliced) | american cheese | 6/21 DeCicco, 1/2 S&S |
+| Cracker Barrel Extra Sharp Cheddar Cheese Cracker Cuts | sliced cheddar | |
 | Boar's Head Fully Cooked Bacon | bacon, cooked bacon | Confirmed preference — fully cooked, not raw/uncooked bacon |
 | Land O Lakes Salted Butter | butter | |
 | Nissin Top Ramen | ramen | |
@@ -50,7 +51,7 @@ Built from an analysis of 23 past Instacart "family order" receipts (Dec 2025–
 | Idahoan Buttery Homestyle Mashed Potatoes | mashed potatoes | |
 | Rice-A-Roni Chicken Rice Mix | rice | |
 | Sabrett Skinless Beef Frankfurters | hot dogs, franks | Likely a cookout favorite |
-| Kettle-cooked potato chips (Cape Cod / Kettle Brand) | potato chips, chips | Brand flexible — use best judgment on what's in stock |
+| Kettle Brand Sea Salt Potato Chips | potato chips, chips | |
 | Bounty Paper Towels | paper towels | |
 
 ## Retailer-specific
