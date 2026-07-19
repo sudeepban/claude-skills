@@ -23,7 +23,7 @@ Call the `cart` tool with `retailer_name` set to the retailer from Step 1. If a 
 
 The staples list lives in [references/staples.md](references/staples.md) and is maintained by the user — read it fresh each time rather than assuming it hasn't changed since last use.
 
-1. **Core tier** — items ordered constantly regardless of which store is active. Add these automatically via `quick_add_search_queries`, no confirmation needed.
+1. **Core tier** — items ordered constantly regardless of which store is active. Add these automatically via `quick_add_search_queries`, no confirmation needed. A couple of core items rotate brand/variety order to order (e.g. cereal) rather than repeating one fixed SKU — for those, ask a quick one-line "which one this week?" using the options listed in staples.md instead of guessing, then add the chosen one.
 2. **Retailer-specific tier** — staples for whichever retailer is active this order (DeCicco's boutique brands, or Stop & Shop's mainstream equivalents). Add these automatically too, using the list for the retailer selected in Step 1.
 3. **Seasonal/occasional tier** — items bought periodically, not every time (e.g. winter ice-melter, taco-night kits, craft beer, a specific protein). Read these out as a short list and ask which, if any, to include this order — don't add without confirmation.
 

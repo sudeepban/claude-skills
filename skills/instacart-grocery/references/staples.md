@@ -21,6 +21,7 @@ Add automatically, no confirmation needed.
 | Organic mini cucumbers (Mucci Farms brand at DeCicco) | 13/23 orders |
 | Grape/cherry tomatoes (NatureSweet brand at DeCicco) | 11/23 orders |
 | Organic broccoli | 9/23 orders |
+| A box of cereal | 11/23 orders overall (9/21 DeCicco, 2/2 S&S) — but the brand rotates almost every time: Frosted Flakes, Post Honey Bunches of Oats, Post Honey Roasted, Lucky Charms, Cheerios, and Kashi GO Protein have all appeared, plus Nature's Path oatmeal once. Ask which one this week rather than assuming a fixed SKU — default to Post Honey Bunches of Oats if no preference given, since it's the only one that's repeated at Stop & Shop |
 
 ## DeCicco & Sons specific (Katonah)
 
@@ -48,7 +49,6 @@ Only 2 orders in the sample so far. Add automatically for now, but revisit once 
 
 | Item | Notes |
 |---|---|
-| Post Honey Bunches of Oats Cereal | In both S&S orders on record |
 | Nature's Promise Organic Black Beans | Mainstream swap for DeCicco's Cento brand |
 | Idahoan Buttery Homestyle Mashed Potatoes | |
 | Rice-A-Roni Chicken Rice Mix | |
@@ -70,4 +70,4 @@ Ask which of these (if any) to include before adding.
 
 ## One-offs seen only once or twice
 
-Not staples — don't suggest these unless the user brings them up: Poland Spring water, Cheerios, Barilla whole-grain penne, Herb-Ox bouillon, Progresso cannellini beans, Schweid & Sons burger blend variants, Kings River mandarins, Blake's Organic Chicken Pot Pie, Reddi-wip, YoCrunch Oreo yogurt cups, Welch's fruit snacks, Bubbies mochi.
+Not staples — don't suggest these unless the user brings them up: Poland Spring water, Barilla whole-grain penne, Herb-Ox bouillon, Progresso cannellini beans, Schweid & Sons burger blend variants, Kings River mandarins, Blake's Organic Chicken Pot Pie, Reddi-wip, YoCrunch Oreo yogurt cups, Welch's fruit snacks, Bubbies mochi.
