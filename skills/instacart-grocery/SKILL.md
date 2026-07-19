@@ -37,16 +37,21 @@ The guide lives in [references/staples.md](references/staples.md) — read it fr
 1. Look for a match — exact or close (shorthand, plural/singular, common nickname) — against a guide entry. Use the guide's specific product name as the search query when found.
 2. Respect retailer scope: skip a DeCicco-only entry (e.g. the bakery bread) if Stop & Shop is active, and use the retailer-appropriate variant where the guide lists one per store (e.g. black bean brand).
 3. If a term is genuinely ambiguous between two guide entries (e.g. plain "mac and cheese" could mean Stouffer's or Beecher's), ask which one rather than guessing.
-4. **If the item text isn't actually a product description** — it names a family member (e.g. "Deep cereal" means a cereal for Deep, not a product called that), or describes an occasion/use rather than a thing to buy (e.g. "bread for grilled cheese" — possibly a different bread than the guide's usual bakery loaf) — don't search it literally. Ask the user what specific product is meant.
-5. If there's no guide match and the text is a plain product description, use the user's own wording as the search query directly — don't invent a brand.
+4. **If the item text isn't actually a product description** — it names a family member (e.g. "Deep cereal" means a cereal for Deep, not a product called that), or describes an occasion/use rather than a thing to buy (e.g. "bread for grilled cheese" — possibly a different bread than the guide's usual bakery loaf) — don't search it literally. Ask the user what specific product is meant, then treat their answer as a fresh item to resolve (guide match, or browse per below).
+5. Anything left with no guide match at all is a genuinely new/one-off item (e.g. shampoo, fig jam) — don't guess a brand or grab whichever result comes back first. Hand these off to Step 4's browse path instead of adding them blind.
 
-## Step 4: Add everything to the cart
+## Step 4: Add items to the cart
 
-Add every item from the pasted list via `quick_add_search_queries` — one entry per item, using the resolved product name from Step 3 (or the original wording if unmatched). Don't skip anything on the list, and don't add anything that wasn't on it or separately requested.
+Two different paths depending on how each item resolved in Step 3:
+
+- **Guide match (including a disambiguated one)** — add directly via `quick_add_search_queries` using the guide's specific product name. No need to show options; the product's already known.
+- **No guide match** — use `search_products` (not quick-add) against the active retailer's catalog and show the user a few real options (name, brand/variant, size) pulled from actual results — not invented — so they can pick rather than getting whichever match quick-add would have grabbed silently. Once they pick, add that specific product via the `cart` tool's `item_updates` with its `product_id`.
+
+Don't skip anything on the list, and don't add anything that wasn't on it or separately requested.
 
 ## Step 5: Review before checkout
 
-Summarize what was added, noting which items matched the guide (and to what product) versus which were searched as-typed, so the user can catch a bad match. Use the `cart` tool to pull current contents if a fresh read is useful. Never complete checkout without the user's explicit go-ahead — this skill builds and reviews the cart, it doesn't place the order unattended.
+Summarize what was added, noting which items matched the guide (and to what product) versus which were picked from browsed options, so the user can catch a bad match. Use the `cart` tool to pull current contents if a fresh read is useful. Never complete checkout without the user's explicit go-ahead — this skill builds and reviews the cart, it doesn't place the order unattended.
 
 ## Updating the guide
 
