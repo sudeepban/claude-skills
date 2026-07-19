@@ -25,7 +25,7 @@ Add automatically, no confirmation needed.
 
 ## Regular but infrequent — either retailer, suggest but don't auto-add
 
-These show up often enough to be real habits, not one-offs, but not in every single order — and nothing about them is tied to a specific store, so they apply equally whichever house is active. Read this list out as a quick checklist each order ("want any of your usual extras — Beecher's, Frank Zurro's bread, ...?") and add only what the user confirms, rather than adding all of them by default.
+These show up often enough to be real habits, not one-offs, but not in every single order — and nothing about them is tied to a specific store, so they apply equally whichever house is active. Read this list out as a quick checklist each order ("want any of your usual extras — Beecher's, chicken breast, ...?") and add only what the user confirms, rather than adding all of them by default.
 
 | Item | Notes |
 |---|---|
@@ -34,11 +34,10 @@ These show up often enough to be real habits, not one-offs, but not in every sin
 | Stouffer's Mac & Cheese (single-serve) | 9/21 DeCicco, usually 2 per order |
 | Beecher's Mac & Cheese | 5/21 DeCicco |
 | Beecher's Cheese Sticks | 5/21 DeCicco |
-| Frank Zurro's or Terranova Bakery Pane Di Casa Bread | 6/21 DeCicco |
 | Boar's Head Yellow American Cheese (deli-sliced) | 6/21 DeCicco, 1/2 S&S |
 | Boar's Head Smoked Bacon | 5/21 DeCicco |
 | Schweid & Sons The Signature Blend (ground beef) | 7/21 DeCicco, 1/2 S&S |
-| PURE LIFE Distilled Water, 1-gal | 6/21 DeCicco |
+| Organic thin-sliced chicken breast | Bell & Evans or store-brand equivalent, whichever's available — available at either location |
 | Pearls Ripe Olives | 5/21 DeCicco |
 | Yasso Frozen Greek Yogurt Bars | 6/21 DeCicco |
 | Cantaloupe chunks (or seasonal melon chunks) | 8/21 DeCicco |
@@ -49,25 +48,20 @@ These show up often enough to be real habits, not one-offs, but not in every sin
 | Turkey Hill Lemon Iced Tea | 4/21 DeCicco |
 | BelGioioso Asiago Shredded Cheese | 4/21 DeCicco |
 | De Cecco pasta (orzo or acini di pepe) | 4/21 DeCicco |
+| Organic black beans | Cento brand at DeCicco, Nature's Promise at Stop & Shop |
+| Idahoan Buttery Homestyle Mashed Potatoes | |
+| Rice-A-Roni Chicken Rice Mix | |
+| Sabrett Skinless Beef Frankfurters | Likely a cookout/hot-dog favorite |
+| Kettle-cooked potato chips (Cape Cod / Kettle Brand) | |
+| Bounty Paper Towels | |
 
-## Retailer-specific — genuine store/brand swaps, not just low sample size
+## Retailer-specific
 
-Add automatically when that retailer is active — these are tied to what a specific store actually stocks (private label or local-only item), not just infrequent.
-
-**DeCicco & Sons (Katonah):**
-- DeCicco & Sons Thin Chicken Cutlets (store's own brand)
-- DeCicco & Sons Naturally Round Cube Bread (store's own brand)
-
-**Stop & Shop (Lavallette) — provisional, only 2 orders on record:**
+Add automatically when DeCicco & Sons is active. Skip entirely at Stop & Shop rather than substituting something else — there isn't a good equivalent there.
 
 | Item | Notes |
 |---|---|
-| Nature's Promise Organic Black Beans | Store-brand swap for DeCicco's Cento |
-| Idahoan Buttery Homestyle Mashed Potatoes | |
-| Rice-A-Roni Chicken Rice Mix | |
-| Sabrett Skinless Beef Frankfurters | Likely a cookout/hot-dog staple at the beach house |
-| Kettle-cooked potato chips (Cape Cod / Kettle Brand) | |
-| Bounty Paper Towels | |
+| Frank Zurro's or Terranova Bakery Pane Di Casa Bread | DeCicco & Sons only — 6/21 orders. Stop & Shop doesn't carry a comparable bakery bread |
 
 ## Seasonal / occasional — confirm each order, don't auto-add
 
@@ -76,8 +70,7 @@ Ask which of these (if any) to include before adding.
 - **Winter only (Dec–Feb):** Diamond Crystal Sno-Paws pet-safe ice melter
 - **Taco night:** Old El Paso Taco Dinner Kit
 - **Baking:** Ghirardelli Brownie Mix, King Arthur All-Purpose Flour
-- **Adult treat, not weekly:** craft beer (Industrial Arts Brewing, Other Half Brewing)
-- **Protein, rotates:** Bell & Evans Organic Chicken Breasts / DeCicco & Sons Thin Chicken Cutlets, frozen peeled & deveined shrimp, Aidells Smoked Chicken Sausage
+- **Protein, rotates:** frozen peeled & deveined shrimp, Aidells Smoked Chicken Sausage
 - **Rotating kid meals:** Pop-Tarts Frosted Strawberry, Amy's Kitchen Cheese Enchilada
 - **Household, as-needed:** Glad trash/recycling bags, Drano, Kleenex
 
