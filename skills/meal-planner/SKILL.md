@@ -19,7 +19,7 @@ A week where everyone's slammed shouldn't get the same dinner plan as a quiet we
 
 Specific options for each category live in [references/meal-options.md](references/meal-options.md) — a list the user maintains and edits over time. Read it each time; don't assume the options or point values are static from a previous run.
 
-Takeout/delivery and dinner-out options are further split by house — Katonah or Lavallette — since the family splits time between the two. See Step 1 for how to pick which list applies.
+Takeout/delivery and dinner-out options are further split by house — Katonah or Lavallette — since the family splits time between the two. Which list applies is resolved per night, not per week, since a week can straddle a move between houses. See Step 1.
 
 ## Step 1: Read the week
 
@@ -29,7 +29,11 @@ Use the calendar tools to find the family calendar (search `list_calendars` for 
 - **Already-planned dinners**: any event titled `MEAL: <description>` — match case-insensitively (your calendar may use `Meal:`) — leave these alone, they're already decided. Note which days they cover.
 - **Implicit already-planned dinners**: any event whose title contains one of these words (case-insensitive) also counts as already decided, even without the `MEAL:` tag — skip it automatically, same as a tagged `MEAL:` event: "dinner", "bbq", "barbecue", "cookout", "potluck", "supper" (e.g. "Dinner with the Smiths", "57 Dinners", "Bappa BBQ"). Use judgment on ones that don't clearly fit even if a keyword matches (e.g. a meeting titled "BBQ Planning Committee" isn't itself a meal) — note the call when presenting the plan (Step 6) if it's a close one.
 - **Recent history**: also pull `MEAL: ...` events from roughly the past 3-4 weeks. Use these to avoid suggesting a repeat of something recently served, especially within the same category.
-- **Location for the week**: default to Lavallette for weeks falling in late June through early September, and Katonah otherwise — these date ranges are approximate, not fixed. State this assumption explicitly when presenting the plan (Step 6) so the user can correct it if that particular week is an exception.
+- **Location, per night**: which house the family is at determines which takeout/dinner-out list applies. Resolve it for each night individually, not once for the whole week — the family does travel mid-week.
+  - *Baseline*: Lavallette for dates in late June through early September, Katonah otherwise. These ranges are approximate, not fixed.
+  - *Transition events override the baseline for the rest of the week*: an event like "Trip back to Katonah" or one naming the other house means nights from that day forward use the other location. Watch for these especially near the season boundaries. Location cues in other event titles (e.g. "Silver Beach" for Lavallette) are supporting evidence.
+  - *The user can override any night* by just saying so ("we'll be in Katonah Thursday") — re-resolve that night and any later nights it implies.
+  - State the assumption per night when presenting the plan (Step 6), and if a week looks split, say where you put the changeover so the user can move it. When a transition's exact day is genuinely unclear, ask rather than silently picking.
 - **Kids' activity events**: any event titled like `<Activity> (Kiran)` or `<Activity> (Mia)` — the parenthetical kid's name is what matters, not the activity name. Note which days have one; these rule out dinner out for that night regardless of what time the activity falls at (see Step 2).
 - **Deep In Office**: any event titled `Deep In Office` — Deep is working late at the office that day, so rule out dinner out for that night regardless of timing, same as a kids' activity event (see Step 2).
 
@@ -80,7 +84,7 @@ Rank nights by how confident the calendar signal is, and take the top 4:
 For each of the nights chosen in Step 4, settle on **one recommended option** consistent with Step 2's classification and Step 3's skew, subject to the category-coverage requirement from Step 4 (a night reassigned there to guarantee coverage follows its reassigned category, not Step 2's default):
 
 - **Home-cooked**: a meal whose point value matches the skew for that day/week (higher points on lighter days, lower points on busier days) — avoiding anything served recently per Step 1's history check.
-- **Takeout/delivery or dinner out**: an option from the list for the location determined in Step 1 (Katonah or Lavallette) — avoiding recent repeats the same way, and respecting Step 2's dinner-out exclusion on kids'-activity and Deep In Office nights.
+- **Takeout/delivery or dinner out**: an option from the list for **that night's** location per Step 1 (Katonah or Lavallette) — avoiding recent repeats the same way, and respecting Step 2's dinner-out exclusion on kids'-activity and Deep In Office nights. On a split week, different nights draw from different lists.
 
 Vary recommendations across the week rather than recommending the same dish or restaurant on multiple nights, even if it's not in the recent-history window.
 
@@ -94,10 +98,12 @@ Offer the options per night and let the user pick — including room to type som
 
 **Preferred: an interactive widget**, when a tool for rendering interactive HTML is available. The user strongly prefers this over typing out picks by hand. Render a form with one card per chosen night (day, category, and the one-line reason), each holding a dropdown plus a single submit button that compiles every night's pick into one message. Keep the broader explanation in your normal response text, not inside the widget itself.
 
+On a takeout or dinner-out night, put the location in the card heading too (e.g. "Thu 7/30 · Dinner out · Katonah"). On a split week this is what makes the changeover visible at a glance, so the user can catch a wrong assumption before picking.
+
 Structure each dropdown in three `<optgroup>`s, listing **every** option in that night's category — a collapsed dropdown costs no space, so there's no reason to truncate:
 
 1. **"Recommended"** — the single Step 5 pick, and the dropdown's pre-selected default, so agreeing means just hitting confirm.
-2. **"All &lt;location&gt; &lt;category&gt;"** (e.g. "All Lavallette takeout", "All home-cooked") — every remaining option in that category, minus the recommendation itself.
+2. **"All &lt;location&gt; &lt;category&gt;"** (e.g. "All Lavallette takeout", "All home-cooked") — every remaining option in that category, minus the recommendation itself. Use that night's own location, which may differ between nights in the same week.
 3. **"Other"** — "Something else..." (reveals a free-text input) and "Skip this night".
 
 Keep option labels clean: emoji plus the name, nothing else. Don't append point values, "had last week" tags, or other annotations — that curation is what the recommendation is for.
