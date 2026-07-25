@@ -96,15 +96,19 @@ Give each option a food/cuisine/restaurant-flavored emoji picked on the spot —
 
 Offer the options per night and let the user pick — including room to type something not on any list at all.
 
-**Preferred: an interactive widget**, when a tool for rendering interactive HTML is available. The user strongly prefers this over typing out picks by hand. Render a form with one card per chosen night (day, category, and the one-line reason), each holding a dropdown plus a single submit button that compiles every night's pick into one message. Keep the broader explanation in your normal response text, not inside the widget itself.
+**Preferred: an interactive widget**, when a tool for rendering interactive HTML is available. The user strongly prefers this over typing out picks by hand. Render a form with **one card per day, all 7**, not just the 4 chosen in Step 4 — each holding a dropdown plus a single submit button that compiles every night's pick into one message. Keep the broader explanation in your normal response text, not inside the widget itself.
 
 On a takeout or dinner-out night, put the location in the card heading too (e.g. "Thu 7/30 · Dinner out · Katonah"). On a split week this is what makes the changeover visible at a glance, so the user can catch a wrong assumption before picking.
 
-Structure each dropdown in three `<optgroup>`s, listing **every** option in that night's category — a collapsed dropdown costs no space, so there's no reason to truncate:
+The 4 chosen nights and the 3 not chosen get different dropdown shapes:
+
+**Chosen nights** — three `<optgroup>`s, listing **every** option in that night's category (a collapsed dropdown costs no space, so there's no reason to truncate):
 
 1. **"Recommended"** — the single Step 5 pick, and the dropdown's pre-selected default, so agreeing means just hitting confirm.
 2. **"All &lt;location&gt; &lt;category&gt;"** (e.g. "All Lavallette takeout", "All home-cooked") — every remaining option in that category, minus the recommendation itself. Use that night's own location, which may differ between nights in the same week.
 3. **"Other"** — "Something else..." (reveals a free-text input) and "Skip this night".
+
+**Not-chosen nights** — a short dropdown defaulting to **"Skip this night"** (pre-selected), plus "Something else..." to override with a custom entry. Don't build a recommendation or option list for these — that's the point of not choosing them in Step 4. Still show the card's one-line context (already planned, dinner-window conflict not prioritized this week, fully open with no signal, etc.) so the user can see why it landed here before deciding whether to override it.
 
 Keep option labels clean: emoji plus the name, nothing else. Don't append point values, "had last week" tags, or other annotations — that curation is what the recommendation is for.
 
