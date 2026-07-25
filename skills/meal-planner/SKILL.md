@@ -75,19 +75,52 @@ Rank nights by how confident the calendar signal is, and take the top 4:
 2. If dinner out is still missing, look for a **second** open night to swap in next (dropping another conflict/activity night, weakest-signal first) rather than reassigning a kept conflict night away from takeout. Only override a kept night's default category — e.g. push a conflict night to dinner out instead of takeout — if there's no open night left available to swap in for it, and only on a night that doesn't also carry a kids'-activity or Deep In Office exclusion (those still can't be dinner out).
 3. If it's genuinely impossible to fit all three — e.g. every open day has a kids' activity ruling out dinner out, or already-planned dinners (Step 1) leave too few days to work with — say so explicitly in Step 6 rather than forcing a bad fit.
 
-## Step 5: Propose specific meals for each chosen night
+## Step 5: Pick a recommendation for each chosen night
 
-For each of the nights chosen in Step 4, pick a category consistent with Step 2's classification and Step 3's skew, subject to the category-coverage requirement from Step 4 (a night reassigned there to guarantee coverage follows its reassigned category, not Step 2's default):
+For each of the nights chosen in Step 4, settle on **one recommended option** consistent with Step 2's classification and Step 3's skew, subject to the category-coverage requirement from Step 4 (a night reassigned there to guarantee coverage follows its reassigned category, not Step 2's default):
 
-- **Home-cooked**: pick a meal whose point value matches the skew for that day/week (higher points on lighter days, lower points on busier days, either on moderate days) — avoiding anything served recently per Step 1's history check.
-- **Takeout/delivery or dinner out**: pick from the list for the location determined in Step 1 (Katonah or Lavallette) — avoiding recent repeats the same way, and respecting Step 2's dinner-out exclusion on kids'-activity and Deep In Office nights.
+- **Home-cooked**: a meal whose point value matches the skew for that day/week (higher points on lighter days, lower points on busier days) — avoiding anything served recently per Step 1's history check.
+- **Takeout/delivery or dinner out**: an option from the list for the location determined in Step 1 (Katonah or Lavallette) — avoiding recent repeats the same way, and respecting Step 2's dinner-out exclusion on kids'-activity and Deep In Office nights.
 
-Vary choices across the week rather than repeating the same dish or restaurant twice even if it's not in the recent-history window.
+Vary recommendations across the week rather than recommending the same dish or restaurant on multiple nights, even if it's not in the recent-history window.
 
-Pick a food/cuisine/restaurant-flavored emoji for each meal on the spot — there's no fixed mapping to look up. Mix it up: the obvious, recognizable pick is often the right call (🍔 for burgers, 🍕 for pizza, a national flag like 🇮🇹 for an Italian spot), but don't feel locked into it every time — an occasional more playful or unexpected choice (🐟 or 🥢 for a sushi night, say) is welcome too. Just keep whatever you pick clearly connected to the actual dish or place.
+The recommendation is what leads each night's list in Step 6 — it isn't a locked-in choice. Also note that night's full set of same-category options from [references/meal-options.md](references/meal-options.md), since the widget presents all of them.
 
-## Step 6: Present the plan for review
+Give each option a food/cuisine/restaurant-flavored emoji picked on the spot — there's no fixed mapping to look up. Mix it up: the obvious, recognizable pick is often the right call (🍔 for burgers, 🍕 for pizza, a national flag like 🇮🇹 for an Italian spot), but don't feel locked into it every time — an occasional more playful or unexpected choice (🐟 or 🥢 for a sushi night, say) is welcome too. Just keep whatever you pick clearly connected to the actual dish or place.
 
-Show a day-by-day table for the chosen nights only: day, category, specific meal with its emoji (or "already planned: <description>" for existing events), and a one-line note on why that category was chosen (dinner-window conflict, kids' activity, Deep In Office, busier/lighter day, etc). List the nights left unplanned separately and briefly summarize the week's overall busyness call from Step 3.
+## Step 6: Let the user choose
 
-**Do not create, edit, or delete any calendar events at this step.** Ask the user if the plan looks right, and only create `Meal: <emoji> <description>` events (title case, matching the existing calendar convention, emoji right after the `Meal:` prefix) for the nights they approve, using their explicit go-ahead for each change (or a clear "yes, add all of these" for the whole batch). Skip the emoji only if nothing reasonable fits.
+Offer the options per night and let the user pick — including room to type something not on any list at all.
+
+**Preferred: an interactive widget**, when a tool for rendering interactive HTML is available. The user strongly prefers this over typing out picks by hand. Render a form with one card per chosen night (day, category, and the one-line reason), each holding a dropdown plus a single submit button that compiles every night's pick into one message. Keep the broader explanation in your normal response text, not inside the widget itself.
+
+Structure each dropdown in three `<optgroup>`s, listing **every** option in that night's category — a collapsed dropdown costs no space, so there's no reason to truncate:
+
+1. **"Recommended"** — the single Step 5 pick, and the dropdown's pre-selected default, so agreeing means just hitting confirm.
+2. **"All &lt;location&gt; &lt;category&gt;"** (e.g. "All Lavallette takeout", "All home-cooked") — every remaining option in that category, minus the recommendation itself.
+3. **"Other"** — "Something else..." (reveals a free-text input) and "Skip this night".
+
+Keep option labels clean: emoji plus the name, nothing else. Don't append point values, "had last week" tags, or other annotations — that curation is what the recommendation is for.
+
+Requirements learned from real use — follow these or the form silently breaks:
+
+- **Scope every element lookup to a uniquely-named root** (e.g. `<div id="mealplan-<week>">`) and find children via `data-` attributes, not shared `id`s. Earlier widgets from the same conversation stay in the DOM; reusing ids like `submit-btn` makes `document.getElementById` return a stale element from a previous widget.
+- **Wrap the script in an IIFE.** Top-level `const`/`let` at global scope collide with identically-named declarations from earlier widgets and throw a SyntaxError that kills the whole script before any listener attaches.
+- **Include a small status line** under the button that updates on click ("Sending…" → "Sent."). Without it there's no way to tell a dead handler from a host-side drop.
+- **How submission actually works**: the send function injects the composed text into the user's chat composer, which they then send themselves — it does not post a message on its own. The injection only lands when the composer is clean. If the user has typed in or deleted text from the composer, it's "dirty" and further injections are silently dropped even though the call reports success. Sending any message resets it to clean; deleting the text does not.
+- **Always reveal the composed text on submit, in a readonly input with a copy button** — never rely on the injection alone. Because a refused injection looks identical to a successful one from inside the widget, this is the only thing that keeps the user from being stuck with a dead button and no way to proceed. Word the status line to cover both cases ("Sent to composer — press enter. If nothing appeared there, copy the text below instead.").
+- To revise after submitting, render a *fresh* widget rather than asking the user to re-click the old one.
+
+**Fallback — use whenever no widget tool is available**: plain text. Here the full-list approach doesn't work — nine options a night is unreadable — so show the Step 5 recommendation plus **2-3 alternates** per night instead. Show a day-by-day table: day, category, numbered options with emoji (or "already planned: <description>" for existing events), and a one-line note on why that category was chosen (dinner-window conflict, kids' activity, Deep In Office, busier/lighter day, etc). List nights left unplanned separately, and summarize the week's overall busyness call from Step 3. Ask the user to reply with a pick per night — by number, by naming something else, or by saying to skip a night.
+
+Either way, still state the reasoning, the unplanned nights, and the week's busyness call in your response text.
+
+**Do not create, edit, or delete any calendar events at this step** — this step only presents choices.
+
+## Step 7: Create the events
+
+Once the user responds — via the widget submission or a typed reply — treat that as the approval. For each night with a real pick, create a `Meal: <emoji> <description>` event (title case, matching the existing calendar convention, emoji right after the `Meal:` prefix; skip the emoji only if nothing reasonable fits). Default to a 6:00-7:00 PM slot unless the user says otherwise — it matches the existing events' timing and sits in the dinner window.
+
+Create nothing for any night marked "skip", left blank, or not addressed.
+
+If anything is ambiguous, confirm that one night rather than guessing — and note that a custom free-text entry that doesn't read like a meal (e.g. an obvious placeholder or test string) is worth checking before writing it to a shared family calendar.
