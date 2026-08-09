@@ -56,11 +56,16 @@ Provides: explicit dew point forecasts per day/night period, humidity %,
 wind direction per period. This is the primary dew point source.
 
 ### Source C: NWS AFD Discussion (when useful)
-Philadelphia/NJ office:
-`https://forecast.weather.gov/product.php?site=NWS&issuedby=phi&product=AFD&format=CI&version=1&glossary=1&highlight=off`
+The correct NWS office varies by location — do NOT hardcode it. Instead:
+1. Read the office code from the NWS point forecast page (shown as "Your
+   local forecast office is [City, State]" with a link like `/phi/` or `/okx/`)
+2. Extract the 3-letter office code from that link
+3. Construct the AFD URL dynamically:
+   `https://forecast.weather.gov/product.php?site=NWS&issuedby={CODE}&product=AFD&format=CI&version=1&glossary=1&highlight=off`
 
-NY/Westchester office:
-`https://forecast.weather.gov/product.php?site=NWS&issuedby=okx&product=AFD&format=CI&version=1&glossary=1&highlight=off`
+Common codes for reference: `phi` (Philadelphia/NJ Shore), `okx` (NY/Westchester),
+`fgz` (Flagstaff/Sedona AZ), `lot` (Chicago), `bos` (Boston) — but always
+derive from the point forecast page rather than guessing.
 
 Provides: meteorologist narrative on fronts, air mass changes, pattern shifts,
 relief days. Fetch when the multi-day pattern is complex or changing.
