@@ -5,7 +5,7 @@ description: >
   comfort and humidity. Use this skill whenever the user asks about the weather,
   forecast, how humid it is, whether it's a good beach day, or any question
   about current or upcoming conditions — at their current location OR any
-  location they mention. Always fetch live NWS data; never answer from memory.
+  location they mention. Always fetch live data; never answer from memory.
   Trigger on casual phrasing: "how's the weather", "nice out?", "beach weather
   this week?", "is it going to be sticky?", "good day to be outside?",
   "what's it like in [place]?", "will it be humid this weekend?".
@@ -15,11 +15,10 @@ description: >
 
 ## Overview
 
-This skill fetches live NWS data and interprets it through a comfort-first
-lens — with special attention to humidity perception, dew point, and
-(when at the coast) wind direction and air mass origin.
+This skill combines NWS (structure, wind, pattern context) with WeatherBug
+(explicit dew point forecasts) to deliver a comfort-first weather interpretation.
 
-Sudeep's known locations for context:
+Sudeep's known locations:
 - **Lavallette NJ** (beach house) — barrier island, Jersey Shore
 - **Katonah NY** (home) — inland Westchester
 
@@ -28,134 +27,129 @@ Sudeep's known locations for context:
 ## Step 1: Determine Location and Time Frame
 
 ### Location
-- **If the user names a specific location** ("what's the weather in Boston?",
-  "how's it looking in Katonah?"): use that location. Note it explicitly in
-  your response ("Here's the forecast for Boston...").
-- **Otherwise**: call `user_location_v0` with `accuracy: precise` to get
-  current location, and use that silently without narrating the lookup.
+- **If the user names a specific location**: use that, note it explicitly.
+- **Otherwise**: call `user_location_v0` with `accuracy: precise`, use silently.
 
 ### Time Frame
 - **Default**: today + 7-day outlook
-- **If the user specifies a different window** ("just today", "this weekend",
-  "next Tuesday", "the next two weeks"): honor that scope. Note when the
-  requested window extends beyond NWS's reliable 7-day range.
-- Flag clearly if you're showing a non-default time frame so the user knows
-  what they're getting.
+- **If the user specifies a window** ("just today", "this weekend", "next
+  Tuesday"): honor that scope. Note if it extends beyond reliable 7-day range.
 
 ---
 
-## Step 2: Fetch NWS Data
+## Step 2: Fetch Data from Two Sources
 
-Construct the NWS point forecast URL from coordinates:
+Fetch both in parallel — they serve different purposes.
+
+### Source A: NWS Point Forecast
 `https://forecast.weather.gov/MapClick.php?lat={lat}&lon={lon}`
 
-For the Philadelphia/NJ region (Lavallette), also fetch the AFD discussion:
+Provides: 7-day text forecast, wind direction/speed, high/low temps,
+current conditions from nearest station, hazard alerts.
+
+### Source B: WeatherBug 10-Day Forecast
+For **Lavallette NJ**: `https://www.weatherbug.com/weather-forecast/10-day-weather/lavallette-nj-08753`
+For **Katonah NY**: `https://www.weatherbug.com/weather-forecast/10-day-weather/katonah-ny-10536`
+For **other locations**: construct as `https://www.weatherbug.com/weather-forecast/10-day-weather/{city}-{state}-{zip}`
+
+Provides: explicit dew point forecasts per day/night period, humidity %,
+wind direction per period. This is the primary dew point source.
+
+### Source C: NWS AFD Discussion (when useful)
+Philadelphia/NJ office:
 `https://forecast.weather.gov/product.php?site=NWS&issuedby=phi&product=AFD&format=CI&version=1&glossary=1&highlight=off`
 
-For other regions, the NWS office varies — use the point forecast page which
-links to the correct local office's discussion. Fetch the AFD when pattern
-context is useful (fronts, air mass changes, multi-day outlook).
+NY/Westchester office:
+`https://forecast.weather.gov/product.php?site=NWS&issuedby=okx&product=AFD&format=CI&version=1&glossary=1&highlight=off`
 
-For dew point data, also fetch the tabular forecast when available:
-`https://forecast.weather.gov/MapClick.php?lat={lat}&lon={lon}&unit=0&lg=english&FcstType=digital`
+Provides: meteorologist narrative on fronts, air mass changes, pattern shifts,
+relief days. Fetch when the multi-day pattern is complex or changing.
 
 ---
 
 ## Step 3: Build the Forecast Response
 
-### Always cover (adjusted to requested time frame):
-1. **Today** — conditions, high, wind direction/speed
-2. **Tonight** — overnight low (key humidity signal)
-3. **7-day outlook** — flag best and worst days for comfort
-
-### Always emphasize comfort/humidity using this framework:
-
-#### Dew Point is the Ground Truth
-| Dew Point | Comfort Level |
+### Dew Point is the Ground Truth
+| Dew Point | Comfort |
 |---|---|
-| Below 55°F | Crisp, refreshing |
-| 55–60°F | Comfortable |
-| 60–65°F | Acceptable, slightly humid |
-| 65–68°F | Middle ground — other factors decide |
-| 68–70°F | Muggy, uncomfortable |
-| 70°F+ | Oppressive — no real relief regardless of wind |
+| Below 55°F | 😌 Crisp, refreshing |
+| 55–60°F | 😊 Comfortable |
+| 60–65°F | 🙂 Acceptable |
+| 65–68°F | 😐 Noticeable — other factors decide |
+| 68–70°F | 😓 Muggy |
+| 70°F+ | 🥵 Oppressive — no relief regardless of wind |
 
-#### Overnight Low as Humidity Proxy
-When dew point isn't explicitly available:
-- Low drops to low-60s or below → dry air mass, comfortable
-- Low stays at 70°F+ → saturated air mass, no overnight relief
+### Overnight Low as Backup Proxy
+When WeatherBug dew point isn't available:
+- Low in low-60s or below → dry air mass, comfortable
+- Low at 70°F+ → saturated air mass, no overnight relief
 
-#### Wind Direction at the Coast (apply when near ocean/beach)
+### Wind Direction at the Coast (Lavallette and similar)
 | Wind | Comfort Effect | Why |
 |---|---|---|
 | NW, N | Very good | Post-frontal Canadian air, dry |
-| NE (post-frontal) | Good | Dry air wrapping around high pressure |
-| E/SE (thermal, afternoon) | Good | Local land-driven breeze, enhances evaporation |
-| E/SE (synoptic, summer) | Deceptive — often humid | Warm Atlantic fetch, moisture-loaded |
-| S, SW | Bad | Gulf moisture or humid continental air |
+| NE (post-frontal) | Good | Dry air wrapping around high |
+| E/SE (thermal, afternoon) | Good | Local land-driven, evaporative |
+| E/SE (synoptic, summer) | Deceptive — often humid | Warm Atlantic fetch |
+| S, SW | Bad | Gulf moisture |
 | W (post-frontal) | Neutral to good | Drier than SW |
 
-**Key distinction for summer**: A large-scale easterly in July–August is NOT
-the refreshing sea breeze — it's been sitting over warm Atlantic water (low-to-
-mid 70s°F) and picks up moisture the whole way. The genuinely refreshing
-easterly is a local, shallow, afternoon thermal effect driven by land heating,
-or a post-frontal pattern.
+**Key summer distinction**: A large-scale easterly in July–August is NOT
+the refreshing sea breeze. Atlantic water off NJ runs 70-74°F in August —
+warm enough to load passing air with moisture. The genuine refreshing
+easterly is a local afternoon thermal effect, or post-frontal.
 
-#### Air Mass Origin (most important factor at the beach)
-- **Post-frontal NW/N flow** = dry Canadian air = best days
-- **SW flow** = Gulf moisture = worst days
+### Air Mass Origin (most important factor at the beach)
+- **Post-frontal NW/N** = dry Canadian air = best days
+- **SW** = Gulf moisture = worst days
 - **Synoptic E/SE in summer** = warm Atlantic moisture = deceptively humid
-- **Stagnant/light winds** = moisture builds locally
+- **Stagnant/light winds** = moisture builds
 
-#### Inland vs. Coast
-- **Inland** (Katonah, etc.): dew point alone is the primary comfort
-  predictor. Wind direction matters less. Straightforward.
-- **At the coast** (Lavallette, etc.): dew point + wind direction + air mass
-  origin together determine comfort. Same dew point can feel very different
-  depending on wind.
+### Inland vs. Coast
+- **Inland** (Katonah): dew point is the primary predictor. Simpler.
+- **Coast** (Lavallette): dew point + wind direction + air mass origin
+  together determine comfort. Same dew point can feel very different.
 
-#### Front Passage Signals
-Read these from the AFD discussion when available:
-- "Post-frontal" = good news coming
+### Front Passage Signals (from AFD)
+- "Post-frontal" = good news
 - "Gulf moisture surging" / "warm front lifting" = bad news
 - "Drier airmass by [day]" = flag as relief day
-- "Dewpoints mixing out" = afternoon improvement expected
-- "Milky/hazy sky" = humid air mass in place regardless of wind
+- "Dewpoints mixing out" = afternoon improvement
+- Milky/hazy sky (visible in text descriptions) = humid air mass in place
 
 ---
 
 ## Step 4: Response Format
 
-Lead with a **one-line comfort verdict** for today (or the requested period),
-then expand.
+Lead with a **one-line comfort verdict** for today, then expand.
 
 ```
-**[Location] — [Date/Period]**
-Today: [comfort verdict + key conditions]
-Tonight: [overnight low + what it signals]
-This week: [day-by-day, highlight best/worst days]
-What to watch: [fronts, pattern shifts, relief days]
+**[Location] — [Date]**
+Today: [comfort verdict + dew point + conditions + wind]
+Tonight: [low + what it signals]
+This week:
+  Mon: dew point X°F, [comfort label], wind [dir] — [one line]
+  Tue: ...
+  ...
+What to watch: [front passages, pattern shifts, best/worst days]
 ```
 
-If the user asked about a **non-default location**, open with:
-"Here's the forecast for [place]..." so it's clear you're not pulling
-their current location.
-
-If the user asked about a **non-default time frame**, note it:
-"Here's just the weekend..." or "Looking at Tuesday specifically..."
-
-Keep it conversational. Sudeep is fluent in this framework — use the
-shorthand freely: "post-frontal NW flow", "synoptic easterly", "Gulf
-air mass", "dew point in the 50s", "overnight low tells the story".
+- If non-default location: open with "Here's the forecast for [place]..."
+- If non-default time frame: note it ("Here's just the weekend...")
+- Use shorthand freely — Sudeep knows the framework: "post-frontal NW flow",
+  "synoptic easterly", "Gulf air mass", "dew point in the 50s"
+- Always flag the best day(s) of the week explicitly
+- At the beach, always comment on whether wind is the real sea breeze or a
+  deceptive synoptic flow
 
 ---
 
 ## Key Reminders
 
-- NWS is always the data source — never answer weather from training memory
-- Dew point is the ground truth for comfort; wind direction is the leading
-  indicator of where dew point is heading
-- The NWS AFD (meteorologist discussion) is the best source for understanding
-  *why* the pattern is what it is and *when* it will change
-- Best beach days: post-frontal NW flow, dew point below 63°F, deep blue sky
+- WeatherBug is the dew point source; NWS is the structure and pattern source
+- NWS AFD explains *why* and *when* the pattern changes — use it for context
+- Dew point is ground truth; wind direction is the leading indicator of trend
+- Best beach days: post-frontal NW, dew point <63°F, deep blue sky
 - Worst beach days: SW wind, dew point 70°F+, overnight low near 75°F+
+- The overnight low progression across the week is the clearest signal of
+  whether the air mass is drying out or building moisture
