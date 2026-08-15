@@ -62,24 +62,34 @@ just per day/night period), always current (no caching lag), and comes
 straight from NWS rather than a repackaged third-party feed. Use this
 first for near-term dew point.
 
-### Source C: WeatherBug Hourly Forecast (dew point, days 3-7)
+### Source C: WeatherBug Hourly Forecast (dew point, days 1-7 — unreliable via fetch, verify each use)
 For **Lavallette NJ**: `https://www.weatherbug.com/weather-forecast/hourly/lavallette-nj-08753?day={today|tomorrow|3|4|5|6|7}`
 For **Katonah NY**: `https://www.weatherbug.com/weather-forecast/hourly/katonah-ny-10536?day={...}`
 For **other locations**: construct as `https://www.weatherbug.com/weather-forecast/hourly/{city}-{state}-{zip}?day={...}`
 
-Provides: dew point per hour, for each of the next 7 days (day tabs:
-today, tomorrow, 3, 4, 5, 6, 7). Use this — not the 10-day summary page —
-for dew point beyond NWS's 48-hour tabular window. The 10-day *summary*
-page (`.../10-day-weather/...`) only surfaces an explicit dew point figure
-starting around day 5-6 in its text blurbs, so don't rely on it for dew
-point. Don't reach for it at all otherwise — Source A (NWS) already
-covers daily high/low/condition/rain chance for the full week, so there's
-no remaining reason to fetch the WeatherBug 10-day summary page.
+**Caching caveat (as of 2026-08-15):** the `day=3/4/5/6/7` params work
+correctly when checked directly in a browser, but repeated fetches through
+the fetch tool returned content identical to `day=tomorrow` regardless of
+which day param was requested — the same stale-cache behavior observed on
+the NWS point-forecast page in this same session. Root cause unconfirmed
+(fetch-tool-side cache vs. something else), but it's NOT a broken/dead
+URL — don't avoid these params outright. Instead: after fetching, sanity
+check the returned date/day-label in the content against what was
+requested before trusting the dew point numbers. If they don't match,
+treat the fetch as stale and don't rely on it for that day.
 
-**No coverage gap**: NWS tabular (days 1-2) + WeatherBug hourly (days 1-7,
-overlapping and extending past NWS) together give a forecasted dew point
-for every day in the default 7-day window. Only fall back to overnight
-low + wind direction/air mass reasoning beyond day 7, or if a fetch fails.
+Provides (when fetched fresh): dew point per hour, for each of the next 7
+days. Use this — not the 10-day summary page — for dew point beyond NWS's
+48-hour tabular window. The 10-day *summary* page (`.../10-day-weather/...`)
+only surfaces an explicit dew point figure starting several days out
+(varies — check actual content rather than assuming a fixed day), so
+prefer the hourly page for anything closer in.
+
+**Coverage**: NWS tabular (days 1-2, most reliable) + WeatherBug hourly
+(days 1-7, verify freshness per above) together should give dew point for
+the full default 7-day window. Fall back to overnight low + wind
+direction/air mass reasoning only beyond day 7, on a fetch failure, or
+when a WeatherBug fetch's returned date doesn't match the requested day.
 
 ### Source D: NWS AFD Discussion (when useful)
 The correct NWS office varies by location — do NOT hardcode it. Instead:
@@ -181,9 +191,11 @@ What to watch: [front passages, pattern shifts, best/worst days]
 ## Key Reminders
 
 - Dew point source hierarchy: NWS tabular hourly for days 1-2 (primary,
-  most precise) → WeatherBug **hourly** page for days 1-7 (use day tabs,
-  not the 10-day summary page, which lacks dew point until day 5-6) →
-  overnight-low/wind reasoning only beyond day 7 or on a fetch failure
+  most precise) → WeatherBug hourly page for days 1-7 (verify the
+  returned date matches the requested day param before trusting it —
+  fetches have intermittently returned stale/cached content) →
+  overnight-low/wind reasoning only beyond day 7, on fetch failure, or
+  when the freshness check fails
 - NWS is also the structure, wind, and pattern source throughout
 - NWS AFD explains *why* and *when* the pattern changes — use it for context
 - Dew point is ground truth; wind direction is the leading indicator of trend
