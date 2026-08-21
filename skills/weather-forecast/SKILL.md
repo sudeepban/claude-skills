@@ -26,7 +26,16 @@ Sudeep's known locations:
 
 ---
 
-## Step 1: Determine Location and Time Frame
+## Step 1: Establish Current Date
+
+Before anything else, call `user_time_v0` to get today's actual date and
+timezone. Use this to anchor every forecast date/day-of-week reference
+that follows (e.g. "today" = the date returned, "this weekend" = the
+Sat/Sun following it). Never assume the date from memory or from a
+prior turn in the conversation — always confirm it fresh each time this
+skill runs.
+
+## Step 2: Determine Location and Time Frame
 
 ### Location
 - **If the user names a specific location**: use that, note it explicitly.
@@ -39,10 +48,10 @@ Sudeep's known locations:
 
 ---
 
-## Step 2: Fetch Data from Multiple Sources
+## Step 3: Fetch Data from Multiple Sources
 
 Fetch in parallel where possible — each source serves a different purpose.
-For dew point specifically: NWS tabular (Source B) for days 1-2, WeatherBug
+For dew point specifically: NWS hourly XML (Source B) for days 1-2, WeatherBug
 hourly (Source C) for days 1-7 — the two overlap early on and together
 cover the full default window with no gap.
 
@@ -52,15 +61,25 @@ cover the full default window with no gap.
 Provides: 7-day text forecast, wind direction/speed, high/low temps,
 current conditions from nearest station, hazard alerts.
 
-### Source B: NWS Tabular Hourly Forecast (dew point, days 1-2)
-`https://forecast.weather.gov/MapClick.php?lat={lat}&lon={lon}&unit=0&lg=english&FcstType=digital`
+### Source B: NWS Hourly XML Forecast (dew point, days 1-2)
+`https://forecast.weather.gov/MapClick.php?lat={lat}&lon={lon}&FcstType=digitalDWML`
 
 Provides: hourly Dewpoint (°F), temp, RH%, wind, sky cover, precip chance —
-for a ~48-hour window from NWS's raw forecast grid. This is the **primary
-dew point source for today and tomorrow**: it's more precise (hourly, not
-just per day/night period), always current (no caching lag), and comes
-straight from NWS rather than a repackaged third-party feed. Use this
-first for near-term dew point.
+for a ~7-day window from NWS's raw forecast grid, in XML. This is the
+**primary dew point source for today and tomorrow**: it's more precise
+(hourly, not just per day/night period) and comes straight from NWS
+rather than a repackaged third-party feed. Use this first for near-term
+dew point.
+
+**Use the XML endpoint (`FcstType=digitalDWML`), not the HTML tabular
+page (`FcstType=digital`).** The HTML tabular page has repeatedly returned
+stale, cached content through the fetch tool — sometimes weeks old, and
+the stale snapshot changes if the lat/lon is nudged, suggesting a
+pre-rendered cache rather than a live page. The XML endpoint has
+returned live, correctly dated data every time tested. Always sanity
+check the `<creation-date>` in the XML response against today's date
+(from Step 1) before trusting the numbers — if it doesn't match, treat
+as stale and fall back per the coverage note below.
 
 ### Source C: WeatherBug Hourly Forecast (dew point, days 1-7 — unreliable via fetch, verify each use)
 For **Lavallette NJ**: `https://www.weatherbug.com/weather-forecast/hourly/lavallette-nj-08753?day={today|tomorrow|3|4|5|6|7}`
@@ -85,7 +104,7 @@ only surfaces an explicit dew point figure starting several days out
 (varies — check actual content rather than assuming a fixed day), so
 prefer the hourly page for anything closer in.
 
-**Coverage**: NWS tabular (days 1-2, most reliable) + WeatherBug hourly
+**Coverage**: NWS hourly XML (days 1-2, most reliable) + WeatherBug hourly
 (days 1-7, verify freshness per above) together should give dew point for
 the full default 7-day window. Fall back to overnight low + wind
 direction/air mass reasoning only beyond day 7, on a fetch failure, or
@@ -108,7 +127,7 @@ relief days. Fetch when the multi-day pattern is complex or changing.
 
 ---
 
-## Step 3: Build the Forecast Response
+## Step 4: Build the Forecast Response
 
 ### Dew Point is the Ground Truth
 | Dew Point | Comfort |
@@ -161,7 +180,7 @@ easterly is a local afternoon thermal effect, or post-frontal.
 
 ---
 
-## Step 4: Response Format
+## Step 5: Response Format
 
 Lead with a **one-line comfort verdict** for today, then expand.
 
@@ -174,6 +193,12 @@ This week:
   Tue: ...
   ...
 What to watch: [front passages, pattern shifts, best/worst days]
+
+Sources:
+- NWS Point Forecast — updated [time/date from page]
+- NWS Hourly XML — updated [creation-date from XML]
+- WeatherBug Hourly (days 3-7) — fetched [date/time], day label verified as [day]
+- NWS AFD Discussion — issued [date/time from product] (if used)
 ```
 
 - If non-default location: open with "Here's the forecast for [place]..."
@@ -185,13 +210,24 @@ What to watch: [front passages, pattern shifts, best/worst days]
 - Always flag the best day(s) of the week explicitly
 - At the beach, always comment on whether wind is the real sea breeze or a
   deceptive synoptic flow
+- **Always end the report with a "Sources" list** naming every source
+  actually used and its update/issue/fetch time, so staleness is visible
+  at a glance. Pull the timestamp from each source itself (NWS page's
+  "Last Update", the XML `<creation-date>`, the product issuance time,
+  or the fetch time if the source doesn't expose one) — don't guess or
+  omit it. If a source came back stale and was discarded, don't list it;
+  note the fallback used instead (e.g. "dew point via overnight-low
+  proxy — NWS XML fetch appeared stale").
 
 ---
 
 ## Key Reminders
 
-- Dew point source hierarchy: NWS tabular hourly for days 1-2 (primary,
-  most precise) → WeatherBug hourly page for days 1-7 (verify the
+- Always call `user_time_v0` first (Step 1) — never assume today's date
+- Dew point source hierarchy: NWS hourly XML (`FcstType=digitalDWML`) for
+  days 1-2 (primary, most precise, and reliably live — NOT the HTML
+  `FcstType=digital` tabular page, which has repeatedly returned stale
+  cached content) → WeatherBug hourly page for days 1-7 (verify the
   returned date matches the requested day param before trusting it —
   fetches have intermittently returned stale/cached content) →
   overnight-low/wind reasoning only beyond day 7, on fetch failure, or
@@ -203,3 +239,5 @@ What to watch: [front passages, pattern shifts, best/worst days]
 - Worst beach days: SW wind, dew point 70°F+, overnight low near 75°F+
 - The overnight low progression across the week is the clearest signal of
   whether the air mass is drying out or building moisture
+- Always close the report with a Sources list and each source's
+  update/fetch time (Step 5)
